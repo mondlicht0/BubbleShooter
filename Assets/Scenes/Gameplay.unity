@@ -1103,17 +1103,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Color>k__BackingField: 3
---- !u!114 &1372852910 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4719410368245759198, guid: e269bcc9ee5344344a5890eeecfeab29, type: 3}
-  m_PrefabInstance: {fileID: 3328386636456352484}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1386421588 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4562353947045935150, guid: 112d32e4732c388449c83ea5824a48a8, type: 3}
@@ -1492,7 +1481,7 @@ PrefabInstance:
     - target: {fileID: 3418721115202808231, guid: ae7a8e0db63acc1488b802bc2f92c61a, type: 3}
       propertyPath: _totalScoreOver
       value: 
-      objectReference: {fileID: 1372852910}
+      objectReference: {fileID: 3328386636456352485}
     - target: {fileID: 4447149352242226585, guid: ae7a8e0db63acc1488b802bc2f92c61a, type: 3}
       propertyPath: m_Name
       value: UIManager
@@ -1926,6 +1915,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e269bcc9ee5344344a5890eeecfeab29, type: 3}
+--- !u!114 &3328386636456352485 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1196265883257649597, guid: e269bcc9ee5344344a5890eeecfeab29, type: 3}
+  m_PrefabInstance: {fileID: 3328386636456352484}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3611777696855175637
 PrefabInstance:
   m_ObjectHideFlags: 0
