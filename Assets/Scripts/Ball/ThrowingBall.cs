@@ -4,19 +4,23 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
 using ElbowGames.Managers;
+using System.Collections;
 
 public class ThrowingBall : MonoBehaviour
 {
+    [field: SerializeField] public BallColor Color { get; private set; }
 
     [SerializeField] private List<Sprite> _ballSprites = new List<Sprite>();
     [SerializeField] private Transform _way;
 
-    private SpriteRenderer _spriteRenderer;
-    private Vector3 _initialPosition;
-    private Rigidbody2D _rb;
+    [Header("Sounds")]
+    [SerializeField] private AudioClip _matchedSound;
+    [SerializeField] private AudioClip _wrongSound;
 
-    [field: SerializeField] public BallColor Color { get; private set; }
-    public event Action OnBallCollided;
+    private SpriteRenderer _spriteRenderer;
+    private Rigidbody2D _rb;
+    private Vector3 _initialPosition;
+    
     public event Action OnBallMatched;
     public event Action OnBallNMatched;
 
@@ -29,6 +33,17 @@ public class ThrowingBall : MonoBehaviour
     private void Start()
     {
         _initialPosition = transform.position;
+
+        OnBallMatched += () => SoundManager.Instance.PlaySfx(_matchedSound);
+        OnBallNMatched += () => SoundManager.Instance.PlaySfx(_wrongSound);
+        OnBallNMatched += SetWayActive;
+    }
+
+    private void OnDisable()
+    {
+        OnBallMatched -= () => SoundManager.Instance.PlaySfx(_matchedSound);
+        OnBallNMatched -= () => SoundManager.Instance.PlaySfx(_wrongSound);
+        OnBallNMatched -= SetWayActive;
     }
 
     private void ChangeBall()
@@ -51,39 +66,52 @@ public class ThrowingBall : MonoBehaviour
         _spriteRenderer.sprite = _ballSprites[(int)Color];
     }
 
+    private void MatchBall(Ball ball)
+    {
+        transform.DOMove(ball.transform.position, 0.25f).OnComplete(() =>
+        {
+            _way.localPosition = Vector3.zero;
+            transform.localPosition = Vector3.zero;
+
+            ChangeBall();
+            StartCoroutine(nameof(SetWayActiveCoroutine));
+            OnBallMatched?.Invoke();
+        });
+    }
+
+    private void SetWayActive()
+    {
+        transform.localPosition = Vector3.zero;
+        _way.gameObject.SetActive(true);
+    }
+
+    private IEnumerator SetWayActiveCoroutine()
+    {
+        yield return new WaitForSeconds(0.25f);
+        SetWayActive();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        _rb.velocity = Vector3.zero;
+        _way.localPosition = Vector3.zero;
+
         if (collision.TryGetComponent(out Ball ball))
         {
             if (ball.Color == Color)
             {
-                transform.DOMove(ball.transform.position, 0.25f).OnComplete(() =>
-                {
-                    _rb.velocity = Vector3.zero;
-                    transform.localPosition = Vector3.zero;
-                    _way.localPosition = Vector3.zero;
-                    OnBallMatched?.Invoke();
-                    ChangeBall();
-                });
+                MatchBall(ball);
             }
 
             else
             {
-                _rb.velocity = Vector3.zero;
-                transform.localPosition = Vector3.zero;
-                _way.localPosition = Vector3.zero;
                 OnBallNMatched?.Invoke();
             }
         }
 
         else
         {
-            _rb.velocity = Vector3.zero;
-            transform.localPosition = Vector3.zero;
-            _way.localPosition = Vector3.zero;
             OnBallNMatched?.Invoke();
         }
-
-        OnBallCollided?.Invoke();
     }
 }

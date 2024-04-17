@@ -7,10 +7,9 @@ namespace ElbowGames.Managers
     [DefaultExecutionOrder(-1)]
     public class GameManager : MonoBehaviour
     {
+        public static GameManager Instance { get; private set; }
         [SerializeField] private UIManager _uiManager;
         [SerializeField] private ThrowingBall _ball;
-        public static GameManager Instance { get; private set; }
-
         public int CurrentScore { get; private set; }
         public bool IsGameOver { get; private set; } = false;
         [field: SerializeField] public int Attempts { get; private set; } = 5;
@@ -25,11 +24,13 @@ namespace ElbowGames.Managers
 
         private void OnEnable()
         {
+            OnGameOver += StopGame;
             OnPause += PauseGame;
         }
 
         private void OnDisable()
         {
+            LevelManager.Instance.OnLevelPassed -= StopGame;
             OnPause -= PauseGame;
             _ball.OnBallMatched -= AddScore;
             _ball.OnBallNMatched -= ReduceAttempts;
@@ -51,21 +52,26 @@ namespace ElbowGames.Managers
 
         private void Start()
         {
+            LevelManager.Instance.OnLevelPassed += StopGame;
+
             _ball.OnBallMatched += AddScore;
             _ball.OnBallNMatched += ReduceAttempts;
+
+            Time.timeScale = 1;
         }
 
         private void ReduceAttempts()
         {
-            if (Attempts <= 0)
+            Attempts--;
+            if (Attempts < 1)
             {
                 OnGameOver?.Invoke();
             }
+        }
 
-            else
-            {
-                Attempts--;
-            }
+        private void StopGame()
+        {
+            Time.timeScale = 0;
         }
 
         private void AddScore()
@@ -93,13 +99,6 @@ namespace ElbowGames.Managers
         public void SwitchSound()
         {
             OnSwitchSound?.Invoke();
-        }
-
-        private void GameOver()
-        {
-            OnGameOver?.Invoke();
-            IsGameOver = true;
-            Time.timeScale = 0f;
         }
 
         private void PauseGame(bool pause)

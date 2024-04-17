@@ -17,27 +17,14 @@ namespace ElbowGames.Ball
             _ballRb = _throwingBall.GetComponent<Rigidbody2D>();
         }
 
-        private void Start()
-        {
-            _throwingBall.OnBallCollided += SetWayActive;
-        }
-
-        private void OnDisable()
-        {
-            _throwingBall.OnBallCollided -= SetWayActive;
-        }
-
-        private void SetWayActive()
-        {
-            _way.gameObject.SetActive(true);
-        }
-
         public void LaunchBall()
         {
+
             if (_ballRb)
             {
                 _way.gameObject.SetActive(false);
                 _ballRb.AddForce(_way.up * _shootForce, ForceMode2D.Impulse);
+                OnBallShooted.Invoke();
             }
         }
     }
