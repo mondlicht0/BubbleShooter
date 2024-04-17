@@ -1,18 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class BallShooter : MonoBehaviour
+namespace ElbowGames.Ball
 {
-    // Start is called before the first frame update
-    void Start()
+    public class BallShooter : MonoBehaviour
     {
-        
-    }
+        [SerializeField] private ThrowingBall _throwingBall;
+        [SerializeField] private Transform _way;
+        [SerializeField] private float _shootForce;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private Rigidbody2D _ballRb;
+        public event Action OnBallShooted;
+
+        private void Awake()
+        {
+            _ballRb = _throwingBall.GetComponent<Rigidbody2D>();
+        }
+
+        private void Start()
+        {
+            _throwingBall.OnBallCollided += SetWayActive;
+        }
+
+        private void OnDisable()
+        {
+            _throwingBall.OnBallCollided -= SetWayActive;
+        }
+
+        private void SetWayActive()
+        {
+            _way.gameObject.SetActive(true);
+        }
+
+        public void LaunchBall()
+        {
+            if (_ballRb)
+            {
+                _way.gameObject.SetActive(false);
+                _ballRb.AddForce(_way.up * _shootForce, ForceMode2D.Impulse);
+            }
+        }
     }
 }
